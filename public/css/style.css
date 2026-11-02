@@ -320,3 +320,10 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
   .statistiche { grid-template-columns: 1fr; }
   .temi-label { display: none; }
 }
+
+/* Nome del negozio lungo su schermi stretti */
+@media (max-width: 420px) {
+  .logo { font-size: 1.3rem; }
+  [data-tema="kraft"] .logo { font-size: 1.7rem; }
+  .menu { gap: 12px; font-size: .95rem; }
+}

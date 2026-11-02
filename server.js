@@ -13,7 +13,7 @@ const admin = require('./lib/admin');
 const PRODUZIONE = process.env.NODE_ENV === 'production';
 
 const negozio = {
-  nome: process.env.NOME_NEGOZIO || 'LaRoss',
+  nome: process.env.NOME_NEGOZIO || 'Le Perle di Ross',
   descrizione: process.env.DESCRIZIONE_NEGOZIO || 'Lavoretti fatti a mano, personalizzati con amore per le vostre feste.',
   email: process.env.EMAIL_NEGOZIO || '',
   spedizione: Number(process.env.SPEDIZIONE_EURO ?? 6),

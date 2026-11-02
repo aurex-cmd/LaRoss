@@ -1,4 +1,4 @@
-# LaRoss – negozio di lavoretti fatti a mano
+# Le Perle di Ross – negozio di lavoretti fatti a mano
 
 Sito minimal per vendere lavoretti: catalogo, pagina dedicata per ogni lavoretto
 (con campo di personalizzazione, es. i nomi sulla tovaglietta), carrello con
@@ -6,6 +6,17 @@ indirizzo di spedizione, pagamento con PayPal (anche carta senza account) e
 un'area riservata dove vedere e gestire gli ordini.
 
 ![Le 4 alternative di stile](docs/anteprima-stili.png)
+
+## Provare la demo in HTML
+
+`demo/index.html` è una versione di prova in un unico file, nello stile Neve:
+basta aprirlo con un doppio clic nel browser (anche dal telefono). Il pagamento è
+simulato e gli ordini restano salvati solo in quel browser; c'è anche l'area
+ordini (`#ordini`) per vedere come appaiono le richieste ricevute.
+
+Per pubblicarla gratis con GitHub Pages: nelle impostazioni del repository →
+*Pages* → scegli il branch e la cartella `/demo` non è supportata direttamente,
+quindi seleziona la radice e apri `https://<utente>.github.io/<repo>/demo/`.
 
 ## Avvio
 
