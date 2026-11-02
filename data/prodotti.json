@@ -1,0 +1,53 @@
+[
+  {
+    "slug": "tovaglietta-dear-santa",
+    "nome": "Tovaglietta “Dear Santa”",
+    "sottotitolo": "La tovaglietta per il latte e i biscotti di Babbo Natale",
+    "prezzo": 15.00,
+    "immagini": ["/img/tovaglietta-dear-santa.jpg"],
+    "descrizione": "La notte della Vigilia, apparecchiate per Babbo Natale! Una tovaglietta in effetto lino con le decorazioni in bianco: un cerchio per il bicchiere di latte, uno per il biscotto e la carota per le renne. In basso, la firma dei vostri bambini.",
+    "dettagli": [
+      "Personalizzata con i nomi che preferite",
+      "Tessuto effetto lino, sagoma arrotondata",
+      "Dimensioni circa 45 × 35 cm",
+      "Realizzata a mano: ogni pezzo è unico"
+    ],
+    "personalizzazione": {
+      "etichetta": "Nomi da scrivere sotto “Love,”",
+      "esempio": "Alice e Lavinia",
+      "maxLunghezza": 40,
+      "obbligatoria": true
+    },
+    "tempiDiLavorazione": "Pronta in 3–5 giorni lavorativi",
+    "disponibile": true,
+    "inEvidenza": true
+  },
+  {
+    "slug": "pallina-personalizzata",
+    "nome": "Pallina di Natale con nome",
+    "sottotitolo": "PRODOTTO DI ESEMPIO — sostituiscilo con un tuo lavoretto",
+    "prezzo": 8.00,
+    "immagini": ["/img/esempio-pallina.svg"],
+    "descrizione": "Questo è un prodotto di esempio per mostrare come appare il catalogo. Modifica o elimina questa voce nel file data/prodotti.json.",
+    "dettagli": ["Diametro 8 cm", "Nome scritto a mano"],
+    "personalizzazione": {
+      "etichetta": "Nome sulla pallina",
+      "esempio": "Giulia",
+      "maxLunghezza": 15,
+      "obbligatoria": true
+    },
+    "tempiDiLavorazione": "Pronta in 2–3 giorni lavorativi",
+    "disponibile": true
+  },
+  {
+    "slug": "segnaposto-natalizi",
+    "nome": "Set di 6 segnaposto",
+    "sottotitolo": "PRODOTTO DI ESEMPIO — sostituiscilo con un tuo lavoretto",
+    "prezzo": 12.00,
+    "immagini": ["/img/esempio-segnaposto.svg"],
+    "descrizione": "Questo è un prodotto di esempio senza personalizzazione. Modifica o elimina questa voce nel file data/prodotti.json.",
+    "dettagli": ["6 pezzi", "Cartoncino e spago"],
+    "tempiDiLavorazione": "Pronto da spedire",
+    "disponibile": true
+  }
+]

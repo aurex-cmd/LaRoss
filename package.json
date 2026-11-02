@@ -1,0 +1,27 @@
+{
+  "name": "laross",
+  "version": "1.0.0",
+  "description": "Negozio online di lavoretti fatti a mano",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurex-cmd/LaRoss.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aurex-cmd/LaRoss/issues"
+  },
+  "homepage": "https://github.com/aurex-cmd/LaRoss#readme",
+  "dependencies": {
+    "express": "^4.22.3"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "private": true
+}
