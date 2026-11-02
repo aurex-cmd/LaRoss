@@ -14,9 +14,9 @@ basta aprirlo con un doppio clic nel browser (anche dal telefono). Il pagamento 
 simulato e gli ordini restano salvati solo in quel browser; c'è anche l'area
 ordini (`#ordini`) per vedere come appaiono le richieste ricevute.
 
-Per pubblicarla gratis con GitHub Pages: nelle impostazioni del repository →
-*Pages* → scegli il branch e la cartella `/demo` non è supportata direttamente,
-quindi seleziona la radice e apri `https://<utente>.github.io/<repo>/demo/`.
+Per metterla online gratis con GitHub Pages: nelle impostazioni del repository
+apri *Pages*, scegli il branch e la cartella radice (`/`), poi visita
+`https://<utente>.github.io/<repo>/demo/`.
 
 ## Avvio
 
