@@ -1,6 +1,6 @@
-# Le Perle di Ross – negozio di lavoretti fatti a mano
+# Le Perle di Ross – negozio di creazioni fatte a mano
 
-Sito minimal per vendere lavoretti: catalogo, pagina dedicata per ogni lavoretto
+Sito minimal per vendere creazioni: catalogo, pagina dedicata per ogni creazione
 (con campo di personalizzazione, es. i nomi sulla tovaglietta), carrello con
 indirizzo di spedizione, pagamento con PayPal (anche carta senza account) e
 un'area riservata dove vedere e gestire gli ordini.
@@ -50,14 +50,14 @@ TEMA=kraft
 MOSTRA_SCELTA_TEMA=false
 ```
 
-## Aggiungere o modificare i lavoretti
+## Aggiungere o modificare le creazioni
 
-I lavoretti sono nel file `data/prodotti.json` (le modifiche si vedono subito,
+Le creazioni sono nel file `data/prodotti.json` (le modifiche si vedono subito,
 senza riavviare). Le foto vanno in `public/img/`. Esempio:
 
 ```jsonc
 {
-  "slug": "tovaglietta-dear-santa",          // indirizzo: /lavoretti/tovaglietta-dear-santa
+  "slug": "tovaglietta-dear-santa",          // indirizzo: /creazioni/tovaglietta-dear-santa
   "nome": "Tovaglietta “Dear Santa”",
   "sottotitolo": "…",
   "prezzo": 15.00,

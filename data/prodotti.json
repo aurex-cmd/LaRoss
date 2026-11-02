@@ -25,7 +25,7 @@
   {
     "slug": "pallina-personalizzata",
     "nome": "Pallina di Natale con nome",
-    "sottotitolo": "PRODOTTO DI ESEMPIO — sostituiscilo con un tuo lavoretto",
+    "sottotitolo": "PRODOTTO DI ESEMPIO — sostituiscilo con una tua creazione",
     "prezzo": 8.00,
     "immagini": ["/img/esempio-pallina.svg"],
     "descrizione": "Questo è un prodotto di esempio per mostrare come appare il catalogo. Modifica o elimina questa voce nel file data/prodotti.json.",
@@ -42,7 +42,7 @@
   {
     "slug": "segnaposto-natalizi",
     "nome": "Set di 6 segnaposto",
-    "sottotitolo": "PRODOTTO DI ESEMPIO — sostituiscilo con un tuo lavoretto",
+    "sottotitolo": "PRODOTTO DI ESEMPIO — sostituiscilo con una tua creazione",
     "prezzo": 12.00,
     "immagini": ["/img/esempio-segnaposto.svg"],
     "descrizione": "Questo è un prodotto di esempio senza personalizzazione. Modifica o elimina questa voce nel file data/prodotti.json.",

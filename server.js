@@ -14,7 +14,7 @@ const PRODUZIONE = process.env.NODE_ENV === 'production';
 
 const negozio = {
   nome: process.env.NOME_NEGOZIO || 'Le Perle di Ross',
-  descrizione: process.env.DESCRIZIONE_NEGOZIO || 'Lavoretti fatti a mano, personalizzati con amore per le vostre feste.',
+  descrizione: process.env.DESCRIZIONE_NEGOZIO || 'Creazioni fatte a mano, personalizzate con amore per le vostre feste.',
   email: process.env.EMAIL_NEGOZIO || '',
   spedizione: Number(process.env.SPEDIZIONE_EURO ?? 6),
   spedizioneGratisDa: Number(process.env.SPEDIZIONE_GRATIS_DA ?? 50),
@@ -65,7 +65,7 @@ const ctx = (req) => ({ negozio, tema: req.tema, mostraTemi: MOSTRA_TEMI });
 // ---------- Pagine ----------
 app.get('/', (req, res) => res.send(views.home(ctx(req), store.prodotti())));
 
-app.get('/lavoretti/:slug', (req, res, next) => {
+app.get('/creazioni/:slug', (req, res, next) => {
   const tutti = store.prodotti();
   const p = tutti.find((x) => x.slug === req.params.slug);
   if (!p) return next();

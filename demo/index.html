@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Le Perle di Ross</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Lavoretti di Natale fatti a mano e personalizzati">
+<meta name="description" content="Creazioni di Natale fatte a mano e personalizzate">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap">
@@ -252,7 +252,7 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
   <div class="contenitore">
     <a href="#home" class="logo">Le Perle di Ross<span aria-hidden="true">✦</span></a>
     <nav class="menu" aria-label="Menu principale">
-      <a href="#lavoretti">Lavoretti</a>
+      <a href="#creazioni">Creazioni</a>
       <a href="#carrello">Carrello<span class="badge" id="badge" hidden>0</span></a>
     </nav>
   </div>
@@ -264,7 +264,7 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
   <div class="contenitore">
     <div>
       <p class="logo">Le Perle di Ross</p>
-      <p class="muted">Lavoretti fatti a mano, personalizzati con amore per le vostre feste.</p>
+      <p class="muted">Creazioni fatte a mano, personalizzate con amore per le vostre feste.</p>
     </div>
     <div>
       <p><strong>Spedizioni</strong></p>
@@ -306,7 +306,7 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
       prezzo: 8,
       img: IMG.pallina,
       esempio: true,
-      descrizione: 'Prodotto di esempio: mostra come appare un secondo lavoretto nel catalogo. Nel sito vero lo sostituirai con le tue creazioni.',
+      descrizione: 'Prodotto di esempio: mostra come appare una seconda creazione nel catalogo. Nel sito vero lo sostituirai con le tue creazioni.',
       dettagli: ['Diametro 8 cm', 'Nome scritto a mano'],
       pers: { etichetta: 'Nome sulla pallina', esempio: 'Giulia', max: 15 },
       tempi: 'Pronta in 2–3 giorni lavorativi',
@@ -396,17 +396,17 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
     <section class="sezione"><div class="contenitore hero-griglia">
       <div>
         <p class="occhiello">Natale ${new Date().getFullYear()} · fatto a mano</p>
-        <h1>Piccoli lavoretti per un Natale speciale</h1>
-        <p class="lead">Lavoretti fatti a mano, personalizzati con amore per le vostre feste.</p>
+        <h1>Piccole creazioni per un Natale speciale</h1>
+        <p class="lead">Creazioni fatte a mano, personalizzate con amore per le vostre feste.</p>
         <div class="azioni">
           <a class="btn btn-primario" href="#${p.slug}">Scopri la tovaglietta</a>
-          <a class="btn btn-secondario" href="#lavoretti">Tutti i lavoretti</a>
+          <a class="btn btn-secondario" href="#creazioni">Tutte le creazioni</a>
         </div>
       </div>
       <a class="hero-img" href="#${p.slug}"><img src="${p.img}" alt="${esc(p.nome)}"></a>
     </div></section>
-    <section class="sezione" id="sezione-lavoretti" style="padding-top:0"><div class="contenitore">
-      <h2>I lavoretti</h2>
+    <section class="sezione" id="sezione-creazioni" style="padding-top:0"><div class="contenitore">
+      <h2>Le creazioni</h2>
       <p class="muted">Ogni pezzo è realizzato a mano, uno alla volta.</p>
       <div class="griglia">${PRODOTTI.map(card).join('')}</div>
     </div></section>`;
@@ -416,7 +416,7 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
     const altri = PRODOTTI.filter((x) => x !== p);
     return `
     <section class="sezione"><div class="contenitore">
-      <nav class="briciole"><a href="#home">Home</a> / <a href="#lavoretti">Lavoretti</a> / <span>${esc(p.nome)}</span></nav>
+      <nav class="briciole"><a href="#home">Home</a> / <a href="#creazioni">Creazioni</a> / <span>${esc(p.nome)}</span></nav>
       <div class="prodotto">
         <img class="prodotto-img" src="${p.img}" alt="${esc(p.nome)}">
         <div>
@@ -476,7 +476,7 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
     if (!righe.length) {
       return `<section class="sezione"><div class="contenitore">
         <h1>Il tuo carrello</h1>
-        <div class="vuoto"><p>Il carrello è vuoto.</p><a class="btn btn-primario" href="#lavoretti">Guarda i lavoretti</a></div>
+        <div class="vuoto"><p>Il carrello è vuoto.</p><a class="btn btn-primario" href="#creazioni">Guarda le creazioni</a></div>
       </div></section>`;
     }
     const salvati = leggi('spedizione', {});
@@ -587,7 +587,7 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
       <div class="grazie-segno" aria-hidden="true">✓</div>
       <h1>Grazie per il tuo ordine!</h1>
       ${o ? `<p class="lead">Ordine <strong>${esc(o.id)}</strong> · ${euro(o.tot)}</p>
-      <p>Abbiamo ricevuto il pagamento. Il lavoretto arriverà a:</p>
+      <p>Abbiamo ricevuto il pagamento. La creazione arriverà a:</p>
       <address>${esc(o.cliente.nome)}<br>${esc(o.indirizzo.via)}<br>${esc(o.indirizzo.cap)} ${esc(o.indirizzo.citta)} (${esc(o.indirizzo.provincia)})</address>
       <p class="muted">Conserva il numero d'ordine per qualsiasi domanda.</p>` : '<p>Il tuo ordine è stato registrato.</p>'}
       <div class="azioni" style="justify-content:center">
@@ -690,9 +690,9 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
   function mostra() {
     const h = decodeURIComponent(location.hash.slice(1));
     let titolo = 'Le Perle di Ross';
-    if (!h || h === 'home' || h === 'lavoretti') {
+    if (!h || h === 'home' || h === 'creazioni') {
       vista.innerHTML = home();
-      if (h === 'lavoretti') { $('#sezione-lavoretti').scrollIntoView(); aggiornaBadge(); return; }
+      if (h === 'creazioni') { $('#sezione-creazioni').scrollIntoView(); aggiornaBadge(); return; }
     } else if (h === 'carrello') {
       vista.innerHTML = paginaCarrello(); attivaCarrello(); titolo = 'Carrello · ' + titolo;
     } else if (h === 'grazie') {

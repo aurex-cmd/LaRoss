@@ -33,7 +33,7 @@
       return `<li class="riga">
         <img src="${esc(p.img)}" alt="">
         <div class="riga-info">
-          <a href="/lavoretti/${esc(r.slug)}"><strong>${esc(p.nome)}</strong></a>
+          <a href="/creazioni/${esc(r.slug)}"><strong>${esc(p.nome)}</strong></a>
           ${r.personalizzazione ? `<span class="muted piccolo">“${esc(r.personalizzazione)}”</span>` : ''}
           <span class="muted piccolo">${euro(p.prezzo)} cad.</span>
         </div>

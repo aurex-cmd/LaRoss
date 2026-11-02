@@ -1,7 +1,7 @@
 {
   "name": "laross",
   "version": "1.0.0",
-  "description": "Negozio online di lavoretti fatti a mano",
+  "description": "Negozio online di creazioni fatte a mano",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
