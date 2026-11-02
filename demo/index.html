@@ -201,7 +201,30 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
 .lista-articoli li { margin-bottom: 10px; }
 .testo-pers { font-weight: 600; background: var(--alt); padding: 2px 8px; border-radius: 4px; }
 .indirizzo-etichetta { display: block; font-size: 1.05rem; margin-bottom: 12px; }
-.copia-ok { color: var(--verde); font-weight: 600; font-size: .875rem; }
+.opzioni { display: grid; gap: 10px; margin-bottom: 16px; }
+.opzione { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 14px 16px; border: 1.5px solid var(--bordo); border-radius: var(--raggio); background: var(--superficie); cursor: pointer; }
+.opzione-compatta { padding: 10px 14px; }
+.opzione:has(input:checked) { border-color: var(--verde); box-shadow: 0 0 0 3px rgba(31,90,61,.15); }
+.opzione input { width: 18px; height: 18px; margin: 0; accent-color: var(--verde); }
+.opzione-prezzo { font-weight: 700; font-variant-numeric: tabular-nums; }
+.campo-titolo { font-weight: 600; font-size: .9rem; margin: 0 0 8px; padding: 0; }
+.mappa-finta { background: var(--alt); border-radius: var(--raggio); padding: 12px; margin-bottom: 16px; }
+.mappa-finta .opzioni { margin: 0; }
+.form-spedizione h2:not(:first-child) { margin-top: 20px; }
+.campo-peso { max-width: 160px; }
+.etichetta-a6 {
+  width: 100%; max-width: 300px; aspect-ratio: 105 / 148; margin-top: 8px;
+  background: #ffffff; color: #111111; border: 2px solid #111111; border-radius: 4px;
+  padding: 14px; display: flex; flex-direction: column; gap: 10px; font-size: .82rem; line-height: 1.35;
+  box-shadow: var(--ombra);
+}
+.et-testa { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #111111; padding-bottom: 6px; }
+.et-testa strong { font-size: 1.3rem; letter-spacing: -.01em; }
+.et-label { display: block; font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #555555; }
+.et-barre { position: relative; height: 64px; margin-top: auto; overflow: hidden; }
+.et-barre i { position: absolute; top: 0; bottom: 0; background: #111111; }
+.et-numero { text-align: center; font-weight: 700; letter-spacing: .06em; font-size: .78rem; }
+.et-ordine { text-align: center; font-size: .7rem; color: #555555; }
 
 /* Piè di pagina */
 .piede { border-top: 1px solid var(--bordo); margin-top: 40px; font-size: .92rem; }
@@ -284,7 +307,7 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
     </div>
     <div>
       <p><strong>Spedizioni</strong></p>
-      <p class="muted">In tutta Italia · 6,00 € · gratis sopra 50,00 €</p>
+      <p class="muted">Con InPost in tutta Italia · Locker 4,90 € · gratis sopra 50,00 €</p>
     </div>
     <div>
       <p><strong>Pagamenti sicuri</strong></p>
@@ -339,7 +362,25 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
       tempi: 'Pronto da spedire',
     },
   ];
-  const SPEDIZIONE = 6, GRATIS_DA = 50;
+  const SPED_LOCKER = 4.9, SPED_DOMICILIO = 6.9, GRATIS_DA = 50;
+  // Locker di esempio: nel sito vero il cliente li sceglie dalla mappa ufficiale InPost
+  const LOCKER_ESEMPIO = [
+    { id: 'ESEMPIO01', nome: 'Locker di esempio – Stazione', indirizzo: 'Piazza della Stazione 1, Milano' },
+    { id: 'ESEMPIO02', nome: 'Locker di esempio – Supermercato', indirizzo: 'Via Torino 25, Milano' },
+    { id: 'ESEMPIO03', nome: 'Punto di esempio – Edicola', indirizzo: 'Corso Buenos Aires 40, Milano' },
+  ];
+  const PACCHI = {
+    A: { nome: 'Piccolo (A)', misure: '8 × 38 × 64 cm' },
+    B: { nome: 'Medio (B)', misure: '19 × 38 × 64 cm' },
+    C: { nome: 'Grande (C)', misure: '41 × 38 × 64 cm' },
+  };
+  const nomeCliente = (o) => `${o.cliente.nome} ${o.cliente.cognome || ''}`.trim();
+  const isLocker = (o) => o.consegna && o.consegna.tipo === 'locker';
+  const luogoBreve = (o) => (isLocker(o) ? `Locker ${o.consegna.punto.id}` : o.indirizzo.citta);
+  function destinazioneRighe(o) {
+    if (isLocker(o)) return [nomeCliente(o), `Locker InPost ${o.consegna.punto.id}`, o.consegna.punto.indirizzo];
+    return [nomeCliente(o), o.indirizzo.via, `${o.indirizzo.cap} ${o.indirizzo.citta} (${o.indirizzo.provincia})`];
+  }
 
   const $ = (s, r = document) => r.querySelector(s);
   const vista = $('#vista');
@@ -364,23 +405,23 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
     const n = carrello().reduce((s, r) => s + r.quantita, 0);
     const b = $('#badge'); b.textContent = n; b.hidden = n === 0;
   }
-  function calcola(righe) {
+  function calcola(righe, tipo) {
     const sub = righe.reduce((s, r) => s + prodotto(r.slug).prezzo * r.quantita, 0);
-    const sped = sub >= GRATIS_DA ? 0 : SPEDIZIONE;
+    const sped = sub >= GRATIS_DA ? 0 : (tipo === 'domicilio' ? SPED_DOMICILIO : SPED_LOCKER);
     return { sub, sped, tot: sub + sped };
   }
 
   // Ordini di esempio per mostrare l'area del creatore
   function ordini() {
-    let o = leggi('ordini', null);
+    let o = leggi('ordini-v2', null);
     if (!o) {
       const ieri = new Date(Date.now() - 864e5).toISOString();
       const tre = new Date(Date.now() - 3 * 864e5).toISOString();
       o = [
-        { id: 'PR-ESEMPIO-2', esempio: true, creato: ieri, stato: 'pagato', articoli: [{ slug: 'tovaglietta-dear-santa', nome: 'Tovaglietta “Dear Santa”', prezzo: 15, quantita: 2, pers: 'Marco e Sofia' }], cliente: { nome: 'Cliente di esempio', email: 'cliente@esempio.it', telefono: '' }, indirizzo: { via: 'Via dei Mille 12', cap: '40121', citta: 'Bologna', provincia: 'BO' }, note: 'Serve entro il 20 dicembre', sub: 30, sped: 6, tot: 36 },
-        { id: 'PR-ESEMPIO-1', esempio: true, creato: tre, stato: 'spedito', spedito: ieri, tracking: '', articoli: [{ slug: 'tovaglietta-dear-santa', nome: 'Tovaglietta “Dear Santa”', prezzo: 15, quantita: 1, pers: 'Alice e Lavinia' }], cliente: { nome: 'Altro cliente di esempio', email: 'altro@esempio.it', telefono: '' }, indirizzo: { via: 'Corso Garibaldi 3', cap: '20121', citta: 'Milano', provincia: 'MI' }, note: '', sub: 15, sped: 6, tot: 21 },
+        { id: 'PR-ESEMPIO-2', esempio: true, creato: ieri, stato: 'pagato', articoli: [{ slug: 'tovaglietta-dear-santa', nome: 'Tovaglietta “Dear Santa”', prezzo: 15, quantita: 2, pers: 'Marco e Sofia' }], cliente: { nome: 'Cliente', cognome: 'di esempio', email: 'cliente@esempio.it', telefono: '333 0000000' }, consegna: { tipo: 'locker', punto: { id: 'ESEMPIO01', indirizzo: 'Piazza della Stazione 1, Milano' } }, note: 'Serve entro il 20 dicembre', sub: 30, sped: 6, tot: 36 },
+        { id: 'PR-ESEMPIO-1', esempio: true, creato: tre, stato: 'spedito', spedito: ieri, tracking: 'ESEMPIO0000000001', articoli: [{ slug: 'tovaglietta-dear-santa', nome: 'Tovaglietta “Dear Santa”', prezzo: 15, quantita: 1, pers: 'Alice e Lavinia' }], cliente: { nome: 'Altro cliente', cognome: 'di esempio', email: 'altro@esempio.it', telefono: '333 0000001' }, consegna: { tipo: 'domicilio' }, indirizzo: { via: 'Corso Garibaldi 3', cap: '20121', citta: 'Milano', provincia: 'MI' }, inpost: { trackingNumber: 'ESEMPIO0000000001', pacco: 'A', pesoKg: 0.5, creata: ieri }, note: '', sub: 15, sped: 6, tot: 21 },
       ];
-      scrivi('ordini', o);
+      scrivi('ordini-v2', o);
     }
     return o;
   }
@@ -504,18 +545,49 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
         <div>
           <ul class="righe" id="righe"></ul>
           <form class="form-spedizione" id="form-spedizione" novalidate>
-            <h2>Dati di spedizione</h2>
+            <h2>I tuoi dati</h2>
             <div class="campi">
-              <label class="campo campo-pieno" for="f-nome"><span>Nome e cognome *</span><input id="f-nome" name="nome" autocomplete="name" required maxlength="100" value="${v('nome')}"></label>
+              <label class="campo" for="f-nome"><span>Nome *</span><input id="f-nome" name="nome" autocomplete="given-name" required maxlength="60" value="${v('nome')}"></label>
+              <label class="campo" for="f-cognome"><span>Cognome *</span><input id="f-cognome" name="cognome" autocomplete="family-name" required maxlength="60" value="${v('cognome')}"></label>
               <label class="campo" for="f-email"><span>Email *</span><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="120" value="${v('email')}"></label>
-              <label class="campo" for="f-tel"><span>Telefono</span><input id="f-tel" name="telefono" type="tel" autocomplete="tel" maxlength="30" value="${v('telefono')}"></label>
-              <label class="campo campo-pieno" for="f-via"><span>Indirizzo e numero civico *</span><input id="f-via" name="via" autocomplete="address-line1" required maxlength="200" value="${v('via')}"></label>
-              <label class="campo" for="f-cap"><span>CAP *</span><input id="f-cap" name="cap" inputmode="numeric" pattern="[0-9]{5}" autocomplete="postal-code" required maxlength="5" value="${v('cap')}"></label>
-              <label class="campo" for="f-citta"><span>Città *</span><input id="f-citta" name="citta" autocomplete="address-level2" required maxlength="100" value="${v('citta')}"></label>
-              <label class="campo" for="f-prov"><span>Provincia (sigla) *</span><input id="f-prov" name="provincia" pattern="[A-Za-z]{2}" maxlength="2" placeholder="es. MI" autocomplete="address-level1" required value="${v('provincia')}"></label>
-              <label class="campo" for="f-paese"><span>Paese</span><input id="f-paese" value="Italia" disabled></label>
-              <label class="campo campo-pieno" for="f-note"><span>Note per l'ordine</span><textarea id="f-note" name="note" rows="3" maxlength="500" placeholder="Es. citofono, data entro cui ti serve, richieste particolari">${v('note')}</textarea></label>
+              <label class="campo" for="f-tel"><span>Cellulare *</span><input id="f-tel" name="telefono" type="tel" autocomplete="tel" required maxlength="20" pattern="[+]?[0-9 ]{8,16}" placeholder="es. 333 1234567" value="${v('telefono')}"><small>InPost ti manda qui il codice per ritirare il pacco.</small></label>
             </div>
+
+            <h2>Consegna con InPost</h2>
+            <div class="opzioni">
+              <label class="opzione" for="c-locker">
+                <input type="radio" id="c-locker" name="consegna" value="locker" ${salvati.consegna !== 'domicilio' ? 'checked' : ''}>
+                <span><strong>Ritiro in un Locker o punto InPost</strong><br><span class="muted piccolo">Ritiri quando vuoi con il codice che ricevi sul telefono</span></span>
+                <span class="opzione-prezzo" id="prezzo-locker"></span>
+              </label>
+              <label class="opzione" for="c-domicilio">
+                <input type="radio" id="c-domicilio" name="consegna" value="domicilio" ${salvati.consegna === 'domicilio' ? 'checked' : ''}>
+                <span><strong>A casa con il corriere InPost</strong><br><span class="muted piccolo">Disponibile solo in alcune zone</span></span>
+                <span class="opzione-prezzo" id="prezzo-domicilio"></span>
+              </label>
+            </div>
+
+            <div id="blocco-locker">
+              <p class="campo-titolo">Scegli il Locker *</p>
+              <div class="mappa-finta">
+                <p class="muted piccolo">Nel sito vero qui c'è la mappa InPost con tutti i Locker vicini. Questi sono esempi:</p>
+                <div class="opzioni">
+                  ${LOCKER_ESEMPIO.map((l) => `
+                  <label class="opzione opzione-compatta" for="l-${l.id}">
+                    <input type="radio" id="l-${l.id}" name="punto" value="${l.id}" ${salvati.punto === l.id ? 'checked' : ''}>
+                    <span><strong>${esc(l.nome)}</strong><br><span class="muted piccolo">${esc(l.indirizzo)} · ${l.id}</span></span>
+                  </label>`).join('')}
+                </div>
+              </div>
+            </div>
+
+            <div class="campi" id="blocco-domicilio" hidden>
+              <label class="campo campo-pieno" for="f-via"><span>Indirizzo e numero civico *</span><input id="f-via" name="via" autocomplete="address-line1" maxlength="200" data-dom value="${v('via')}"></label>
+              <label class="campo" for="f-cap"><span>CAP *</span><input id="f-cap" name="cap" inputmode="numeric" pattern="[0-9]{5}" autocomplete="postal-code" maxlength="5" data-dom value="${v('cap')}"></label>
+              <label class="campo" for="f-citta"><span>Città *</span><input id="f-citta" name="citta" autocomplete="address-level2" maxlength="100" data-dom value="${v('citta')}"></label>
+              <label class="campo" for="f-prov"><span>Provincia (sigla) *</span><input id="f-prov" name="provincia" pattern="[A-Za-z]{2}" maxlength="2" placeholder="es. MI" autocomplete="address-level1" data-dom value="${v('provincia')}"></label>
+            </div>
+            <label class="campo" for="f-note"><span>Note per l'ordine</span><textarea id="f-note" name="note" rows="3" maxlength="500" placeholder="Es. data entro cui ti serve, richieste particolari">${v('note')}</textarea></label>
           </form>
         </div>
         <aside class="riquadro riepilogo">
@@ -552,7 +624,10 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
           <button type="button" class="rimuovi" data-rimuovi="${i}" aria-label="Rimuovi ${esc(p.nome)}">×</button>
         </li>`;
       }).join('');
-      const t = calcola(righe);
+      const t = calcola(righe, tipo());
+      const gratis = t.sub >= GRATIS_DA;
+      $('#prezzo-locker').textContent = gratis ? 'Gratis' : euro(SPED_LOCKER);
+      $('#prezzo-domicilio').textContent = gratis ? 'Gratis' : euro(SPED_DOMICILIO);
       $('#importi').innerHTML = `
         <div><dt>Subtotale</dt><dd>${euro(t.sub)}</dd></div>
         <div><dt>Spedizione</dt><dd>${t.sped ? euro(t.sped) : 'Gratis'}</dd></div>
@@ -569,7 +644,20 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
     });
 
     const f = $('#form-spedizione'), err = $('#errore');
-    const dati = () => Object.fromEntries(['nome', 'email', 'telefono', 'via', 'cap', 'citta', 'provincia', 'note'].map((k) => [k, f.elements[k].value.trim()]));
+    const tipo = () => (f.querySelector('input[name=consegna]:checked') || {}).value || 'locker';
+    const punto = () => (f.querySelector('input[name=punto]:checked') || {}).value || '';
+    const dati = () => ({
+      ...Object.fromEntries(['nome', 'cognome', 'email', 'telefono', 'via', 'cap', 'citta', 'provincia', 'note'].map((k) => [k, f.elements[k].value.trim()])),
+      consegna: tipo(), punto: punto(),
+    });
+    const aggiornaConsegna = () => {
+      const dom = tipo() === 'domicilio';
+      $('#blocco-locker').hidden = dom;
+      $('#blocco-domicilio').hidden = !dom;
+      f.querySelectorAll('[data-dom]').forEach((el) => { el.required = dom; });
+      disegna();
+    };
+    f.addEventListener('change', (e) => { if (e.target.name === 'consegna') aggiornaConsegna(); });
     f.addEventListener('input', () => { err.hidden = true; scrivi('spedizione', dati()); });
 
     $('#paga').addEventListener('click', () => {
@@ -580,21 +668,28 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
         if (primo) { primo.focus({ preventScroll: true }); primo.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
         return;
       }
-      const d = dati(), righe = carrello(), t = calcola(righe);
+      if (tipo() === 'locker' && !punto()) {
+        err.textContent = 'Scegli il Locker dove ritirare il pacco.'; err.hidden = false;
+        $('#blocco-locker').scrollIntoView({ block: 'center', behavior: 'smooth' });
+        return;
+      }
+      const d = dati(), righe = carrello(), t = calcola(righe, tipo());
+      const lk = LOCKER_ESEMPIO.find((l) => l.id === d.punto);
       const id = 'PR-' + Date.now().toString(36).toUpperCase().slice(-6);
       const o = {
         id, creato: new Date().toISOString(), stato: 'pagato',
         articoli: righe.map((r) => ({ slug: r.slug, nome: prodotto(r.slug).nome, prezzo: prodotto(r.slug).prezzo, quantita: r.quantita, pers: r.pers })),
-        cliente: { nome: d.nome, email: d.email, telefono: d.telefono },
-        indirizzo: { via: d.via, cap: d.cap, citta: d.citta, provincia: d.provincia.toUpperCase() },
+        cliente: { nome: d.nome, cognome: d.cognome, email: d.email, telefono: d.telefono },
+        consegna: d.consegna === 'locker' ? { tipo: 'locker', punto: { id: lk.id, indirizzo: lk.indirizzo } } : { tipo: 'domicilio' },
+        indirizzo: d.consegna === 'domicilio' ? { via: d.via, cap: d.cap, citta: d.citta, provincia: d.provincia.toUpperCase() } : null,
         note: d.note, sub: t.sub, sped: t.sped, tot: t.tot,
       };
-      scrivi('ordini', [o, ...ordini()]);
+      scrivi('ordini-v2', [o, ...ordini()]);
       scrivi('ultimo', id);
       salvaCarrello([]);
       location.hash = 'grazie';
     });
-    disegna();
+    aggiornaConsegna();
   }
 
   function grazie() {
@@ -603,8 +698,9 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
       <div class="grazie-segno" aria-hidden="true">✓</div>
       <h1>Grazie per il tuo ordine!</h1>
       ${o ? `<p class="lead">Ordine <strong>${esc(o.id)}</strong> · ${euro(o.tot)}</p>
-      <p>Abbiamo ricevuto il pagamento. La creazione arriverà a:</p>
-      <address>${esc(o.cliente.nome)}<br>${esc(o.indirizzo.via)}<br>${esc(o.indirizzo.cap)} ${esc(o.indirizzo.citta)} (${esc(o.indirizzo.provincia)})</address>
+      <p>Abbiamo ricevuto il pagamento. ${isLocker(o) ? 'La creazione arriverà al Locker InPost:' : 'La creazione arriverà a:'}</p>
+      <address>${destinazioneRighe(o).map(esc).join('<br>')}</address>
+      <p class="muted piccolo">Quando la spediamo, InPost ti avvisa via SMS ed email.</p>
       <p class="muted">Conserva il numero d'ordine per qualsiasi domanda.</p>` : '<p>Il tuo ordine è stato registrato.</p>'}
       <div class="azioni" style="justify-content:center">
         <a class="btn btn-secondario" href="#home">Torna al negozio</a>
@@ -635,7 +731,7 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
       ${lista.length ? `<ul class="lista-ordini">${lista.map((o) => `
         <li><a class="ordine-card" href="#ordine-${esc(o.id)}">
           <div><strong>${esc(o.id)}</strong>${o.esempio ? ' <span class="etichetta-esempio">Esempio</span>' : ''}<br>
-            <span class="muted piccolo">${dataIt(o.creato)} · ${esc(o.cliente.nome)} · ${esc(o.indirizzo.citta)}</span><br>
+            <span class="muted piccolo">${dataIt(o.creato)} · ${esc(nomeCliente(o))} · ${esc(luogoBreve(o))}</span><br>
             <span class="piccolo">${o.articoli.map((a) => `${a.quantita}× ${esc(a.nome)}${a.pers ? ` <em>“${esc(a.pers)}”</em>` : ''}`).join(', ')}</span>
           </div>
           <div class="destra"><span class="stato stato-${o.stato}">${o.stato === 'pagato' ? 'Da spedire' : 'Spedito'}</span><br><strong class="num">${euro(o.tot)}</strong></div>
@@ -648,7 +744,6 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
   }
 
   function paginaOrdine(o) {
-    const etichetta = `${o.cliente.nome}\n${o.indirizzo.via}\n${o.indirizzo.cap} ${o.indirizzo.citta} (${o.indirizzo.provincia})\nItalia`;
     return `<section class="sezione"><div class="contenitore stretto">
       <nav class="briciole"><a href="#ordini">Ordini</a> / <span>${esc(o.id)}</span></nav>
       <div class="admin-testa"><h1>${esc(o.id)}</h1><span class="stato stato-${o.stato}">${o.stato === 'pagato' ? 'Pagato, da spedire' : 'Spedito'}</span></div>
@@ -666,12 +761,11 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
         </div>
         <div class="pannello">
           <h2>Spedire a</h2>
-          <address class="indirizzo-etichetta" id="etichetta">${esc(etichetta).replace(/\n/g, '<br>')}</address>
+          <address class="indirizzo-etichetta">${destinazioneRighe(o).map(esc).join('<br>')}</address>
           <p class="piccolo">${esc(o.cliente.email)}${o.cliente.telefono ? `<br>${esc(o.cliente.telefono)}` : ''}</p>
-          <button type="button" class="btn btn-leggero" id="copia">Copia indirizzo</button>
-          <span class="copia-ok" id="copia-ok" hidden>Copiato</span>
         </div>
       </div>
+      ${pannelloInPost(o)}
       <div class="pannello">
         <h2>Aggiorna stato</h2>
         <label class="campo" for="tracking"><span>Numero di tracking (facoltativo)</span><input id="tracking" maxlength="80" value="${esc(o.tracking || '')}"></label>
@@ -684,21 +778,72 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
     </div></section>`;
   }
 
+  function pannelloInPost(o) {
+    const s = o.inpost;
+    if (s) {
+      return `<div class="pannello pannello-inpost">
+        <h2>Etichetta InPost</h2>
+        <p class="piccolo">Pacco ${esc(PACCHI[s.pacco].nome)}, ${String(s.pesoKg).replace('.', ',')} kg · tracking <strong class="num">${esc(s.trackingNumber)}</strong></p>
+        <div class="etichetta-a6" aria-label="Anteprima etichetta">
+          <div class="et-testa"><strong>InPost</strong><span>${isLocker(o) ? 'Locker' : 'Corriere'} · ${esc(s.pacco)}</span></div>
+          <div class="et-blocco"><span class="et-label">Destinatario</span>${destinazioneRighe(o).map(esc).join('<br>')}<br>${esc(o.cliente.telefono || '')}</div>
+          <div class="et-blocco"><span class="et-label">Mittente</span>Le Perle di Ross</div>
+          <div class="et-barre" aria-hidden="true">${barre(s.trackingNumber)}</div>
+          <div class="et-numero num">${esc(s.trackingNumber)}</div>
+          <div class="et-ordine">Ordine ${esc(o.id)}</div>
+        </div>
+        <p class="avviso piccolo" style="margin-top:16px">Questa è un'anteprima di prova. Nel sito vero il pulsante scarica il PDF ufficiale di InPost, pronto da stampare (10×15 o A4).</p>
+        <p class="muted piccolo" style="margin:0">Attacca l'etichetta sul pacco e lascialo in un Locker o punto InPost. Poi segna l'ordine come spedito.</p>
+      </div>`;
+    }
+    return `<div class="pannello pannello-inpost">
+      <h2>Spedisci con InPost</h2>
+      <fieldset class="opzioni" style="border:0;padding:0;margin:0 0 16px">
+        <legend class="campo-titolo">Misura del pacco</legend>
+        ${Object.entries(PACCHI).map(([k, p], i) => `
+        <label class="opzione opzione-compatta" for="pacco-${k}"><input type="radio" id="pacco-${k}" name="pacco" value="${k}" ${i === 0 ? 'checked' : ''}><span><strong>${p.nome}</strong><br><span class="muted piccolo">fino a ${p.misure}</span></span></label>`).join('')}
+      </fieldset>
+      <label class="campo campo-peso" for="peso"><span>Peso (kg)</span><input id="peso" type="number" min="0.1" max="25" step="0.1" value="0.5" inputmode="decimal"></label>
+      <button type="button" class="btn btn-primario" id="genera">Genera etichetta InPost</button>
+    </div>`;
+  }
+
+  function barre(seme) {
+    let h = 0, x = 0, out = '';
+    for (const c of seme) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    for (let i = 0; x < 260; i++) {
+      h = (h * 1103515245 + 12345) >>> 0;
+      const w = 1 + (h >>> 16) % 3;
+      if (i % 2 === 0) out += `<i style="left:${x}px;width:${w}px"></i>`;
+      x += w + 1;
+    }
+    return out;
+  }
+
   function attivaOrdine(o) {
+    const g = $('#genera');
+    if (g) {
+      g.addEventListener('click', () => {
+        const lista = ordini();
+        const x = lista.find((y) => y.id === o.id);
+        const pacco = (vista.querySelector('input[name=pacco]:checked') || {}).value || 'A';
+        const peso = Math.min(25, Math.max(0.1, Math.round(parseFloat(String($('#peso').value).replace(',', '.')) * 10) / 10 || 0.5));
+        const tn = '6' + String(Date.now()).slice(-12).padStart(12, '0') + String(Math.floor(Math.random() * 1e6)).padStart(6, '0');
+        x.inpost = { trackingNumber: tn, pacco, pesoKg: peso, creata: new Date().toISOString() };
+        x.tracking = tn;
+        scrivi('ordini-v2', lista);
+        mostra();
+        const pan = $('.pannello-inpost'); if (pan) pan.scrollIntoView({ block: 'start' });
+      });
+    }
     $('#cambia').addEventListener('click', (e) => {
       const lista = ordini();
       const x = lista.find((y) => y.id === o.id);
       x.stato = e.currentTarget.dataset.stato;
       x.tracking = $('#tracking').value.trim();
       if (x.stato === 'spedito') x.spedito = new Date().toISOString(); else delete x.spedito;
-      scrivi('ordini', lista);
+      scrivi('ordini-v2', lista);
       mostra();
-    });
-    $('#copia').addEventListener('click', () => {
-      const testo = $('#etichetta').innerText;
-      const ok = () => { $('#copia-ok').hidden = false; };
-      const fallback = () => { const r = document.createRange(); r.selectNodeContents($('#etichetta')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
-      try { navigator.clipboard.writeText(testo).then(ok, fallback); } catch (e) { fallback(); }
     });
   }
 

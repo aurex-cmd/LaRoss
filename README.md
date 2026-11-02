@@ -84,11 +84,42 @@ senza riavviare). Le foto vanno in `public/img/`. Esempio:
 Vai su `/admin` (utente `admin`, password = `ADMIN_PASSWORD` in `.env`).
 
 - **Da spedire**: ordini pagati, con cosa realizzare e il testo da personalizzare
-- Dettaglio ordine: indirizzo pronto da copiare sull'etichetta, email e telefono
+- Dettaglio ordine: Locker o indirizzo di consegna, email e telefono
+- **Genera etichetta InPost** (vedi sotto)
 - "Segna come spedito" (con numero di tracking facoltativo), "Annulla ordine"
 - **Scarica CSV**: tutti gli ordini, apribile con Excel
 
 Gli ordini sono salvati in `storage/ordini.json`: fanne una copia ogni tanto.
+
+## Spedire con InPost
+
+Tutte le spedizioni passano da InPost:
+
+- **Al checkout** il cliente sceglie il Locker o punto InPost dalla mappa ufficiale
+  (oppure, se attivi `INPOST_DOMICILIO=true`, la consegna a casa con il corriere).
+  Il cellulare è obbligatorio: InPost ci manda il codice di ritiro.
+- **Nell'area ordini** scegli la misura del pacco e il peso e premi
+  **Genera etichetta InPost**: il sito crea la spedizione e ti dà il PDF da
+  stampare (10×15 o A4) con il numero di tracking già salvato nell'ordine.
+  Poi lasci il pacco in un Locker o punto InPost.
+
+Misure dei pacchi usate: Piccolo (A) 8×38×64 cm, Medio (B) 19×38×64 cm,
+Grande (C) 41×38×64 cm, fino a 25 kg. Verificale con il tuo contratto InPost.
+
+**Come attivarlo**
+
+1. Apri un account business con InPost Italia e chiedi al tuo referente
+   (o all'Integration Team) l'accesso all'API: `client_id`, `client_secret`,
+   l'*organization ID* e la chiave Geowidget per il dominio del sito.
+2. Inseriscili in `.env` insieme ai dati del mittente. Prova prima con
+   `INPOST_ENV=stage`, poi passa a `production`.
+
+Senza credenziali, fuori produzione, il pulsante crea un'**etichetta di prova**
+(non valida per spedire) e al checkout c'è un campo per scrivere il codice del
+Locker al posto della mappa.
+
+Documentazione tecnica: <https://developers.inpost-group.com/shipping> e
+<https://developers.inpost-group.com/geowidget-integration>.
 
 ## Attivare PayPal
 

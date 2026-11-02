@@ -9,6 +9,7 @@ const store = require('./lib/store');
 const paypal = require('./lib/paypal');
 const views = require('./lib/views');
 const admin = require('./lib/admin');
+const inpost = require('./lib/inpost');
 
 const PRODUZIONE = process.env.NODE_ENV === 'production';
 
@@ -16,7 +17,8 @@ const negozio = {
   nome: process.env.NOME_NEGOZIO || 'Le Perle di Ross',
   descrizione: process.env.DESCRIZIONE_NEGOZIO || 'Creazioni fatte a mano, personalizzate con amore per le vostre feste.',
   email: process.env.EMAIL_NEGOZIO || '',
-  spedizione: Number(process.env.SPEDIZIONE_EURO ?? 6),
+  spedizione: Number(process.env.SPEDIZIONE_EURO ?? 4.9), // Locker InPost
+  spedizioneDomicilio: process.env.INPOST_DOMICILIO === 'true' ? Number(process.env.SPEDIZIONE_DOMICILIO_EURO ?? 6.9) : null,
   spedizioneGratisDa: Number(process.env.SPEDIZIONE_GRATIS_DA ?? 50),
 };
 
@@ -60,7 +62,10 @@ app.use((req, res, next) => {
   req.tema = tema;
   next();
 });
-const ctx = (req) => ({ negozio, tema: req.tema, mostraTemi: MOSTRA_TEMI });
+const ctx = (req) => ({
+  negozio, tema: req.tema, mostraTemi: MOSTRA_TEMI,
+  inpost: { domicilio: negozio.spedizioneDomicilio !== null, geowidgetToken: inpost.GEOWIDGET_TOKEN },
+});
 
 // ---------- Pagine ----------
 app.get('/', (req, res) => res.send(views.home(ctx(req), store.prodotti())));
@@ -110,27 +115,44 @@ function preparaOrdine(body) {
   }
 
   const c = body.cliente || {};
-  const cliente = { nome: testo(c.nome, 100), email: testo(c.email, 120), telefono: testo(c.telefono, 30) };
-  const indirizzo = {
-    via: testo(c.via, 200), cap: testo(c.cap, 5), citta: testo(c.citta, 100),
-    provincia: testo(c.provincia, 2).toUpperCase(), paese: 'IT',
+  const cliente = {
+    nome: testo(c.nome, 60), cognome: testo(c.cognome, 60),
+    email: testo(c.email, 120), telefono: testo(c.telefono, 20),
   };
-  if (!cliente.nome) errori.push('Inserisci nome e cognome.');
+  if (!cliente.nome || !cliente.cognome) errori.push('Inserisci nome e cognome.');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cliente.email)) errori.push('Inserisci un indirizzo email valido.');
-  if (!indirizzo.via) errori.push("Inserisci l'indirizzo.");
-  if (!/^\d{5}$/.test(indirizzo.cap)) errori.push('Il CAP deve avere 5 cifre.');
-  if (!indirizzo.citta) errori.push('Inserisci la città.');
-  if (!/^[A-Z]{2}$/.test(indirizzo.provincia)) errori.push('Inserisci la sigla della provincia (es. MI).');
+  if (!/^\+?\d{8,15}$/.test(cliente.telefono.replace(/\s/g, ''))) errori.push('Inserisci un numero di cellulare valido: serve a InPost per la consegna.');
+
+  // Spedizione sempre con InPost: Locker/punto oppure (se attivo) a domicilio
+  const tipo = c.consegna === 'domicilio' && negozio.spedizioneDomicilio !== null ? 'domicilio' : 'locker';
+  let consegna;
+  let indirizzo = null;
+  if (tipo === 'locker') {
+    const punto = { id: testo(c.puntoId, 20).toUpperCase(), indirizzo: testo(c.puntoIndirizzo, 200) };
+    if (!/^[A-Z0-9-]{3,20}$/.test(punto.id)) errori.push('Scegli il Locker InPost dove ritirare il pacco.');
+    consegna = { tipo, corriere: 'InPost', punto };
+  } else {
+    indirizzo = {
+      via: testo(c.via, 200), cap: testo(c.cap, 5), citta: testo(c.citta, 100),
+      provincia: testo(c.provincia, 2).toUpperCase(), paese: 'IT',
+    };
+    if (!indirizzo.via) errori.push("Inserisci l'indirizzo.");
+    if (!/^\d{5}$/.test(indirizzo.cap)) errori.push('Il CAP deve avere 5 cifre.');
+    if (!indirizzo.citta) errori.push('Inserisci la città.');
+    if (!/^[A-Z]{2}$/.test(indirizzo.provincia)) errori.push('Inserisci la sigla della provincia (es. MI).');
+    consegna = { tipo, corriere: 'InPost' };
+  }
 
   const subtotale = arrotonda(articoli.reduce((s, a) => s + a.prezzo * a.quantita, 0));
-  const spedizione = negozio.spedizioneGratisDa && subtotale >= negozio.spedizioneGratisDa ? 0 : negozio.spedizione;
+  const costo = tipo === 'locker' ? negozio.spedizione : negozio.spedizioneDomicilio;
+  const spedizione = negozio.spedizioneGratisDa && subtotale >= negozio.spedizioneGratisDa ? 0 : costo;
   return {
     errori,
     ordine: {
       id: store.nuovoIdOrdine(),
       creato: new Date().toISOString(),
       stato: 'in_attesa',
-      articoli, cliente, indirizzo,
+      articoli, cliente, consegna, indirizzo,
       note: testo(c.note, 500),
       subtotale, spedizione: arrotonda(spedizione), totale: arrotonda(subtotale + spedizione),
     },
@@ -208,5 +230,6 @@ const PORTA = Number(process.env.PORT || 3000);
 app.listen(PORTA, () => {
   console.log(`🎄 ${negozio.nome} attivo su http://localhost:${PORTA}`);
   console.log(`   Ordini: http://localhost:${PORTA}/admin (utente: admin)`);
+  console.log(`   InPost: ${inpost.configurato ? (inpost.STAGE ? 'ambiente di test' : 'produzione') : 'non configurato (etichette di prova)'}`);
   console.log(`   PayPal: ${paypal.configurato ? (process.env.PAYPAL_ENV === 'live' ? 'LIVE' : 'sandbox') : 'non configurato (modalità prova)'}`);
 });

@@ -332,3 +332,17 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
   [data-tema="kraft"] .logo { font-size: 1.7rem; }
   .menu { gap: 12px; font-size: .95rem; }
 }
+
+/* Consegna InPost */
+.opzioni-consegna, .scelta-pacco { display: grid; gap: 10px; margin: 0 0 16px; border: 0; padding: 0; }
+.scelta-pacco legend { font-weight: 600; font-size: .9rem; margin-bottom: 8px; }
+.opzione { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 14px 16px; border: 1.5px solid var(--bordo); border-radius: var(--raggio); background: var(--superficie); cursor: pointer; }
+.opzione:has(input:checked) { border-color: var(--secondario); box-shadow: 0 0 0 3px color-mix(in srgb, var(--secondario) 15%, transparent); }
+.opzione input { width: 18px; height: 18px; accent-color: var(--secondario); margin: 0; }
+.opzione-prezzo { font-weight: 700; font-variant-numeric: tabular-nums; }
+.mappa-locker { display: block; width: 100%; height: 460px; border: 1px solid var(--bordo); border-radius: var(--raggio); overflow: hidden; margin-bottom: 12px; }
+.punto-scelto { background: color-mix(in srgb, var(--secondario) 10%, var(--superficie)); border: 1px solid color-mix(in srgb, var(--secondario) 35%, transparent); border-radius: var(--raggio); padding: 12px 16px; margin-bottom: 16px; }
+.form-spedizione h2 + .opzioni-consegna { margin-top: 4px; }
+.form-spedizione h2:not(:first-child) { margin-top: 16px; }
+.campo-peso { max-width: 160px; }
+.tracking { font-variant-numeric: tabular-nums; letter-spacing: .02em; }
