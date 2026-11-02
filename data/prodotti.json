@@ -20,7 +20,8 @@
     },
     "tempiDiLavorazione": "Pronta in 3–5 giorni lavorativi",
     "disponibile": true,
-    "inEvidenza": true
+    "inEvidenza": true,
+    "pulsanteHome": "Scopri la tovaglietta"
   },
   {
     "slug": "pallina-personalizzata",

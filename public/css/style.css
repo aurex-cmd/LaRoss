@@ -18,7 +18,7 @@
   --font-testo: 'Inter', system-ui, sans-serif;
   --peso-titoli: 600;
   --raggio: 10px;
-  --raggio-btn: 999px;
+  --raggio-btn: 8px;
   --ombra: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
 }
 
@@ -161,6 +161,11 @@ p { margin: 0 0 1em; }
 .occhiello { text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; font-weight: 600; color: var(--secondario); }
 [data-tema="notte"] .occhiello { color: var(--accento); }
 .azioni { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.azioni-hero { flex-wrap: nowrap; gap: 10px; }
+.azioni-hero .btn { flex: 0 1 auto; white-space: nowrap; }
+@media (max-width: 560px) {
+  .azioni-hero .btn { flex: 1 1 0; padding: 14px 10px; font-size: clamp(.82rem, 3.9vw, .95rem); min-width: 0; }
+}
 .hero-img img { border-radius: var(--raggio); box-shadow: var(--ombra); aspect-ratio: 4/3; object-fit: cover; width: 100%; }
 
 /* ============ GRIGLIA PRODOTTI ============ */

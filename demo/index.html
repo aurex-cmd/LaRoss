@@ -67,7 +67,7 @@ p { margin: 0 0 1em; }
 /* Pulsanti */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 14px 26px; border: 1.5px solid transparent; border-radius: 999px;
+  padding: 14px 26px; border: 1.5px solid transparent; border-radius: 8px;
   font: 600 1rem/1 var(--font-testo); text-decoration: none; cursor: pointer;
   transition: background .2s, color .2s, border-color .2s, transform .1s;
 }
@@ -101,6 +101,11 @@ p { margin: 0 0 1em; }
 .hero-griglia { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(24px, 5vw, 64px); align-items: center; }
 .occhiello { text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; font-weight: 600; color: var(--verde); }
 .azioni { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.azioni-hero { flex-wrap: nowrap; gap: 10px; }
+.azioni-hero .btn { flex: 0 1 auto; white-space: nowrap; }
+@media (max-width: 560px) {
+  .azioni-hero .btn { flex: 1 1 0; padding: 14px 10px; font-size: clamp(.82rem, 3.9vw, .95rem); min-width: 0; }
+}
 .hero-img img { border-radius: var(--raggio); box-shadow: var(--ombra); aspect-ratio: 4/3; object-fit: cover; width: 100%; }
 .griglia { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; }
 .card { text-decoration: none; background: var(--superficie); border: 1px solid var(--bordo); border-radius: var(--raggio); overflow: hidden; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
@@ -236,6 +241,17 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
   .logo { font-size: 1.3rem; }
   .menu { gap: 14px; font-size: .95rem; }
 }
+
+/* Gesto indietro: freccia che segue il dito dal bordo sinistro */
+.gesto-indietro {
+  position: fixed; z-index: 50; top: 50%; left: calc(env(safe-area-inset-left, 0px) - 52px);
+  width: 44px; height: 44px; margin-top: -22px; border-radius: 50%;
+  background: var(--superficie); color: var(--testo); border: 1px solid var(--bordo); box-shadow: var(--ombra);
+  display: grid; place-items: center; font-size: 1.4rem; line-height: 1;
+  opacity: 0; pointer-events: none;
+}
+.gesto-indietro.pronto { background: var(--rosso); color: var(--su-colore); border-color: var(--rosso); }
+.gesto-indietro.rilascio { transition: transform .2s, opacity .2s; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
 }
@@ -398,7 +414,7 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
         <p class="occhiello">Natale ${new Date().getFullYear()} · fatto a mano</p>
         <h1>Piccole creazioni per un Natale speciale</h1>
         <p class="lead">Creazioni fatte a mano, personalizzate con amore per le vostre feste.</p>
-        <div class="azioni">
+        <div class="azioni azioni-hero">
           <a class="btn btn-primario" href="#${p.slug}">Scopri la tovaglietta</a>
           <a class="btn btn-secondario" href="#creazioni">Tutte le creazioni</a>
         </div>
@@ -688,6 +704,7 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
 
   // ---- Navigazione ----
   function mostra() {
+    registraPagina();
     const h = decodeURIComponent(location.hash.slice(1));
     let titolo = 'Le Perle di Ross';
     if (!h || h === 'home' || h === 'creazioni') {
@@ -713,6 +730,69 @@ address { font-style: normal; background: var(--superficie); border: 1px solid v
     window.scrollTo(0, 0);
     aggiornaBadge();
   }
+
+  // ---- Gesto indietro: scorri da sinistra verso destra partendo dal bordo ----
+  const pila = [];
+  function registraPagina() {
+    const h = location.hash.slice(1) || 'home';
+    if (pila.length > 1 && pila[pila.length - 2] === h) pila.pop();
+    else if (pila[pila.length - 1] !== h) pila.push(h);
+  }
+  function tornaIndietro() {
+    if (pila.length > 1) {
+      pila.pop();
+      const prec = pila[pila.length - 1];
+      pila.pop(); // verrà reinserita da registraPagina
+      location.replace('#' + prec);
+    } else if ((location.hash.slice(1) || 'home') !== 'home') {
+      pila.length = 0;
+      location.replace('#home');
+    }
+  }
+  const freccia = document.createElement('div');
+  freccia.className = 'gesto-indietro';
+  freccia.setAttribute('aria-hidden', 'true');
+  freccia.textContent = '‹';
+  document.body.appendChild(freccia);
+
+  const BORDO = 32, SOGLIA = 80;
+  let inizio = null, attivo = false, dx = 0;
+  const reset = () => {
+    freccia.classList.add('rilascio');
+    freccia.style.transform = ''; freccia.style.opacity = '';
+    freccia.classList.remove('pronto');
+    inizio = null; attivo = false; dx = 0;
+  };
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    const t = e.touches[0];
+    if (t.clientX > BORDO) return;
+    inizio = { x: t.clientX, y: t.clientY }; attivo = false; dx = 0;
+    freccia.classList.remove('rilascio');
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if (!inizio) return;
+    const t = e.touches[0];
+    dx = t.clientX - inizio.x;
+    const dy = Math.abs(t.clientY - inizio.y);
+    if (!attivo) {
+      if (dy > 12 && dy > dx) { reset(); return; } // è uno scroll verticale
+      if (dx > 10) attivo = true;
+    }
+    if (attivo) {
+      if (e.cancelable) e.preventDefault();
+      const corsa = Math.min(dx, SOGLIA * 1.4);
+      freccia.style.transform = `translateX(${corsa}px)`;
+      freccia.style.opacity = Math.min(1, dx / SOGLIA);
+      freccia.classList.toggle('pronto', dx >= SOGLIA);
+    }
+  }, { passive: false });
+  document.addEventListener('touchend', () => {
+    if (inizio && attivo && dx >= SOGLIA) tornaIndietro();
+    if (inizio) reset();
+  });
+  document.addEventListener('touchcancel', () => { if (inizio) reset(); });
+
   window.addEventListener('hashchange', mostra);
   mostra();
 })();
