@@ -3,8 +3,10 @@
     "slug": "tovaglietta-dear-santa",
     "nome": "Tovaglietta “Dear Santa”",
     "sottotitolo": "La tovaglietta per il latte e i biscotti di Babbo Natale",
-    "prezzo": 15.00,
-    "immagini": ["/img/tovaglietta-dear-santa.jpg"],
+    "prezzo": 15.0,
+    "immagini": [
+      "/img/tovaglietta-dear-santa.jpg"
+    ],
     "descrizione": "La notte della Vigilia, apparecchiate per Babbo Natale! Una tovaglietta in effetto lino con le decorazioni in bianco: un cerchio per il bicchiere di latte, uno per il biscotto e la carota per le renne. In basso, la firma dei vostri bambini.",
     "dettagli": [
       "Personalizzata con i nomi che preferite",
@@ -24,16 +26,24 @@
     "pulsanteHome": "Scopri la tovaglietta"
   },
   {
-    "slug": "pallina-personalizzata",
-    "nome": "Pallina di Natale con nome",
-    "sottotitolo": "PRODOTTO DI ESEMPIO — sostituiscilo con una tua creazione",
-    "prezzo": 8.00,
-    "immagini": ["/img/esempio-pallina.svg"],
-    "descrizione": "Questo è un prodotto di esempio per mostrare come appare il catalogo. Modifica o elimina questa voce nel file data/prodotti.json.",
-    "dettagli": ["Diametro 8 cm", "Nome scritto a mano"],
+    "slug": "pallina-primo-natale",
+    "nome": "Pallina “Il mio primo Natale”",
+    "sottotitolo": "La pallina rossa per il primo Natale del vostro bambino",
+    "prezzo": 8.0,
+    "immagini": [
+      "/img/pallina-primo-natale.jpg"
+    ],
+    "posizioneImmagine": "50% 75%",
+    "descrizione": "Una pallina rossa lucida con la scritta “1° Natale di” e il nome del bambino in bianco. Arriva su un cartoncino effetto kraft con decori dorati, chiusa da un fiocco di raso rosso con il nome scritto in oro. Un ricordo da appendere all'albero ogni anno.",
+    "dettagli": [
+      "Personalizzata con il nome del bambino",
+      "Nome ripetuto in oro sul fiocco di raso",
+      "Confezione regalo in cartoncino con decori dorati",
+      "Realizzata a mano: ogni pezzo è unico"
+    ],
     "personalizzazione": {
-      "etichetta": "Nome sulla pallina",
-      "esempio": "Giulia",
+      "etichetta": "Nome del bambino",
+      "esempio": "Cecilia",
       "maxLunghezza": 15,
       "obbligatoria": true
     },
@@ -44,10 +54,15 @@
     "slug": "segnaposto-natalizi",
     "nome": "Set di 6 segnaposto",
     "sottotitolo": "PRODOTTO DI ESEMPIO — sostituiscilo con una tua creazione",
-    "prezzo": 12.00,
-    "immagini": ["/img/esempio-segnaposto.svg"],
+    "prezzo": 12.0,
+    "immagini": [
+      "/img/esempio-segnaposto.svg"
+    ],
     "descrizione": "Questo è un prodotto di esempio senza personalizzazione. Modifica o elimina questa voce nel file data/prodotti.json.",
-    "dettagli": ["6 pezzi", "Cartoncino e spago"],
+    "dettagli": [
+      "6 pezzi",
+      "Cartoncino e spago"
+    ],
     "tempiDiLavorazione": "Pronto da spedire",
     "disponibile": true
   }

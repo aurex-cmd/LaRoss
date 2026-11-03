@@ -76,8 +76,8 @@ senza riavviare). Le foto vanno in `public/img/`. Esempio:
 }
 ```
 
-> La pallina e i segnaposto sono **prodotti di esempio**: sostituiscili con i tuoi.
-> Anche prezzo e dimensioni della tovaglietta sono da verificare.
+> I segnaposto sono un **prodotto di esempio**: sostituiscili con una tua creazione.
+> Prezzi e dimensioni di tovaglietta e pallina sono da verificare.
 
 ## Vedere gli ordini
 
